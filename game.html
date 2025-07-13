@@ -6,20 +6,84 @@
     <title>Sueca - Game</title>
     <link rel="stylesheet" href="styles/styles.css">
 </head>
-<body>
-    <h1>Sueca Original</h1>
-    
-    <div class="game-container">
-        <div id="card-display"></div>
+<body>    
+    <div class="game-board">
+        <!-- Top player -->
+        <div class="player top-player">
+            <div class="player-name">Player 3</div>
+            <div class="player-cards" id="player-2-cards">
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+                <div class="card-back"></div>
+            </div>
+        </div>
+
+        <!-- Middle row - left and right players -->
+        <div class="middle-row">
+            <div class="player left-player">
+                <div class="player-name">Player 4</div>
+                <div class="player-cards" id="player-3-cards">
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                </div>
+            </div>
+
+            <!-- Center playing area -->
+            <div class="play-area">
+                <div class="played-cards" id="played-cards">
+                    <!-- Cards played in current trick will appear here -->
+                </div>
+            </div>
+
+            <div class="player right-player">
+                <div class="player-name">Player 2</div>
+                <div class="player-cards" id="player-1-cards">
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                    <div class="card-back"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom player (us) -->
+        <div class="player bottom-player">
+            <div class="player-name">You</div>
+            <div class="player-cards" id="player-hand">
+                <!-- Player's actual cards will be shown here -->
+            </div>
+        </div>
     </div>
 
-    <script src="logic/frontend.js"></script>
-    <script>
-        // Display a sample card
-        document.addEventListener('DOMContentLoaded', function() {
-            const cardHTML = drawCard('hearts', 'A');
-            document.getElementById('card-display').innerHTML = cardHTML;
+    <script type="module">
+        import { GameUI } from './logic/GameUI.js';
+
+        // Start the game when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new GameUI();
         });
     </script>
+
 </body>
 </html>
