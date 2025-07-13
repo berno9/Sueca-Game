@@ -8,12 +8,12 @@ class Card {
         this.rank = Card.RANKS[id % 10];
     }
 
-    // Static method to create a deck of 40 cards
+    // Create a deck of 40 cards
     static createDeck() {
         return [...Array(40).keys()];
     }
 
-    // Static method to shuffle an array (Fisher–Yates shuffle)
+    // Shuffle an array (Fisher–Yates shuffle)
     static shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -22,19 +22,19 @@ class Card {
         return array;
     }
 
-    // Static method to deal cards from a deck
+    // Deal cards from a deck
     static dealCards(deck, handSize) {
         return deck.splice(0, handSize);
     }
 
-    // Static method to convert card ID to card object (for backward compatibility)
+    // Convert card ID to card object (for backward compatibility)
     static idToCard(id) {
         const suit = Card.SUITS[Math.floor(id / 10)];
         const rank = Card.RANKS[id % 10];
         return { rank, suit };
     }
 
-    // Static method to convert suit letter to full name
+    // Convert suit letter to full name
     static suitToName(suitLetter) {
         const suitMap = {
             'S': 'spades',
@@ -45,17 +45,14 @@ class Card {
         return suitMap[suitLetter] || 'spades';
     }
 
-    // Instance method to get full suit name
     getSuitName() {
         return Card.suitToName(this.suit);
     }
 
-    // Instance method to check if card is red
     isRed() {
         return this.suit === 'H' || this.suit === 'D';
     }
 
-    // Instance method to get suit symbol
     getSuitSymbol() {
         const suitSymbols = {
             'H': '♥',
@@ -66,7 +63,7 @@ class Card {
         return suitSymbols[this.suit];
     }
 
-    // Instance method to generate card HTML
+    // Generate card HTML
     toHTML() {
         const symbol = this.getSuitSymbol();
         const colorClass = this.isRed() ? 'red' : 'black';
@@ -88,7 +85,7 @@ class Card {
         `;
     }
 
-    // Static method to create card element from ID (for backward compatibility)
+    // Create card element from ID (for backward compatibility)
     static createCardElement(cardId, isPlayable = false) {
         const card = new Card(cardId);
         
@@ -104,7 +101,7 @@ class Card {
         return cardDiv;
     }
 
-    // Static method for backward compatibility with drawCard function
+    // For backward compatibility with drawCard function
     static drawCard(number, suit) {
         const suitSymbols = {
             'hearts': '♥',
