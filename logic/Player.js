@@ -1,32 +1,50 @@
+import { Hand } from './Hand.js';
+import { Card } from './Card.js';
+
 class Player {
-
-    constructor(initial_hand = []) {
-        this.current_hand = initial_hand;
+    constructor(cards = []) {
+        this.hand = new Hand(cards);
     }
 
-    playCard() { // random selection for now
-        if (this.current_hand.length === 0) return undefined;          
-
-        const idx = Math.floor(Math.random() * this.current_hand.length); 
-        return this.current_hand.splice(idx, 1)[0];                       
+    // Play a random card (for AI players)
+    playCard() {
+        return this.hand.playRandomCard();
     }
 
+    // Play a specific card by ID (for user input)
     playSelectedCard(cardId) {
-        const cardIndex = this.current_hand.indexOf(cardId);
-        if (cardIndex === -1) {
-            return undefined; // Card not found in hand
-        }
-        
-        // Remove and return the selected card
-        return this.current_hand.splice(cardIndex, 1)[0];
+        return this.hand.playCard(cardId);
     }
 
     hasCard(cardId) {
-        return this.current_hand.includes(cardId);
+        return this.hand.hasCard(cardId);
     }
 
+    // Get number of cards in hand
     getHandSize() {
-        return this.current_hand.length;
+        return this.hand.size();
+    }
+
+    // Get all card IDs (for backward compatibility with UI)
+    getCardIds() {
+        return this.hand.getCardIds();
+    }
+
+    // Get the hand object
+    getHand() {
+        return this.hand;
+    }
+
+    // === BACKWARD COMPATIBILITY ===
+    // Keep current_hand property for existing UI code
+    get current_hand() {
+        return this.hand.getCardIds();
+    }
+
+    set current_hand(cardIds) {
+        // For backward compatibility, convert IDs to Card objects
+        const cards = cardIds.map(id => new Card(id));
+        this.hand = new Hand(cards);
     }
 }
 

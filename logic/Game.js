@@ -1,15 +1,16 @@
 import { Player } from "./Player.js";
 import { Card } from "./Card.js";
+import { Deck } from "./Deck.js";
 
 class Game {
     constructor() {
-        const deck = Card.shuffle(Card.createDeck());
+        const deck = new Deck().shuffle();
 
         this.players = [
-            new Player(Card.dealCards(deck, 10)), // this player is the user
-            new Player(Card.dealCards(deck, 10)),
-            new Player(Card.dealCards(deck, 10)),
-            new Player(Card.dealCards(deck, 10))
+            new Player(deck.deal(10)), // this player is the user
+            new Player(deck.deal(10)),
+            new Player(deck.deal(10)),
+            new Player(deck.deal(10))
         ];
         
         this.currentRound = 1;
@@ -99,20 +100,35 @@ class Game {
     }
 
     // Add a played card to the current trick
-    addPlayedCard(cardId, playerIndex) {
-        this.playedCards.push({
-            cardId: cardId,
-            playerIndex: playerIndex,
-            card: Card.idToCard(cardId)
-        });
-        
-        // Notify UI to update display
-        if (this.onCardPlayed) {
-            this.onCardPlayed(cardId, playerIndex);
+    addPlayedCard(card, playerIndex) {
+        // Handle both Card objects and IDs for backward compatibility
+        if (typeof card === 'number') {
+            // Legacy: card is an ID
+            this.playedCards.push({
+                cardId: card,
+                playerIndex: playerIndex,
+                card: Card.idToCard(card)
+            });
+            
+            if (this.onCardPlayed) {
+                this.onCardPlayed(card, playerIndex);
+            }
+        } else if (card && card.id !== undefined) {
+            // card is a Card object (for good measure)
+            this.playedCards.push({
+                cardId: card.id,
+                playerIndex: playerIndex,
+                card: card.toObject()
+            });
+            
+            if (this.onCardPlayed) {
+                this.onCardPlayed(card.id, playerIndex);
+            }
+        } else {
+            console.error('Invalid card provided to addPlayedCard:', card);
         }
     }
 
-    // Move to next player
     nextPlayer() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 4;
     }
@@ -192,13 +208,13 @@ class Game {
     // Restart the entire game
     restartGame() {
         // Reset game state
-        const deck = Card.shuffle(Card.createDeck());
+        const deck = new Deck().shuffle();
         
         this.players = [
-            new Player(Card.dealCards(deck, 10)),
-            new Player(Card.dealCards(deck, 10)),
-            new Player(Card.dealCards(deck, 10)),
-            new Player(Card.dealCards(deck, 10))
+            new Player(deck.deal(10)),
+            new Player(deck.deal(10)),
+            new Player(deck.deal(10)),
+            new Player(deck.deal(10))
         ];
         
         this.currentRound = 1;

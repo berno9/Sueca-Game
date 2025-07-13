@@ -8,45 +8,28 @@ class Card {
         this.rank = Card.RANKS[id % 10];
     }
 
-    // Create a deck of 40 cards
-    static createDeck() {
-        return [...Array(40).keys()];
-    }
-
-    // Shuffle an array (Fisher–Yates shuffle)
-    static shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    // Deal cards from a deck
-    static dealCards(deck, handSize) {
-        return deck.splice(0, handSize);
-    }
-
-    // Convert card ID to card object (for backward compatibility)
-    static idToCard(id) {
-        const suit = Card.SUITS[Math.floor(id / 10)];
-        const rank = Card.RANKS[id % 10];
-        return { rank, suit };
+    // Convert to simple object (for game logic that needs rank/suit)
+    toObject() {
+        return { 
+            id: this.id,
+            rank: this.rank, 
+            suit: this.suit 
+        };
     }
 
     // Convert suit letter to full name
-    static suitToName(suitLetter) {
+    suitToName() {
         const suitMap = {
             'S': 'spades',
             'H': 'hearts', 
             'D': 'diamonds',
             'C': 'clubs'
         };
-        return suitMap[suitLetter] || 'spades';
+        return suitMap[this.suit] || 'spades';
     }
 
     getSuitName() {
-        return Card.suitToName(this.suit);
+        return this.suitToName();
     }
 
     isRed() {
@@ -69,7 +52,7 @@ class Card {
         const colorClass = this.isRed() ? 'red' : 'black';
         
         return `
-            <div class="card ${colorClass}">
+            <div class="card ${colorClass}" data-card-id="${this.id}">
                 <div class="card-corner top-left">
                     <div class="card-number">${this.rank}</div>
                     <div class="card-suit">${symbol}</div>
@@ -85,20 +68,31 @@ class Card {
         `;
     }
 
+    // Create card element (returns the actual DOM element)
+    toElement(isPlayable = false) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = this.toHTML();
+        const cardElement = tempDiv.firstElementChild;
+        
+        if (isPlayable) {
+            cardElement.classList.add('playable');
+        }
+        
+        return cardElement;
+    }
+
+    // === STATIC METHODS FOR BACKWARD COMPATIBILITY ===
+    
     // Create card element from ID (for backward compatibility)
     static createCardElement(cardId, isPlayable = false) {
         const card = new Card(cardId);
-        
-        const cardElement = document.createElement('div');
-        cardElement.innerHTML = card.toHTML();
-        const cardDiv = cardElement.firstElementChild;
-        
-        cardDiv.dataset.cardId = cardId;
-        if (isPlayable) {
-            cardDiv.classList.add('playable');
-        }
-        
-        return cardDiv;
+        return card.toElement(isPlayable);
+    }
+
+    // Convert card ID to simple object (for backward compatibility)
+    static idToCard(id) {
+        const card = new Card(id);
+        return card.toObject();
     }
 
     // For backward compatibility with drawCard function
