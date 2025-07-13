@@ -1,5 +1,5 @@
 import { Game } from './Game.js';
-import { createCardElement } from './utils.js';
+import { Card } from './Card.js';
 
 export class GameUI {
     constructor() {
@@ -31,7 +31,7 @@ export class GameUI {
         
         const userHand = this.game.getUserHand();
         userHand.forEach(cardId => {
-            const cardElement = createCardElement(cardId, true);
+            const cardElement = Card.createCardElement(cardId, true);
             cardElement.addEventListener('click', (e) => this.handleCardClick(e, cardId));
             handElement.appendChild(cardElement);
         });
@@ -94,7 +94,7 @@ export class GameUI {
 
     displayPlayedCard(cardId, playerIndex) {
         const playedCardsElement = document.getElementById('played-cards');
-        const cardElement = createCardElement(cardId);
+        const cardElement = Card.createCardElement(cardId);
         
         cardElement.classList.add('played-card', `player-${playerIndex}`);
         playedCardsElement.appendChild(cardElement);

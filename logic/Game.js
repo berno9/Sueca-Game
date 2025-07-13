@@ -1,15 +1,15 @@
 import { Player } from "./Player.js";
-import { dealCards, shuffle, idToCard } from "./utils.js";
+import { Card } from "./Card.js";
 
 class Game {
     constructor() {
-        const deck = shuffle([...Array(40).keys()]);
+        const deck = Card.shuffle(Card.createDeck());
 
         this.players = [
-            new Player(dealCards(deck, 10)), // this player is the user
-            new Player(dealCards(deck, 10)),
-            new Player(dealCards(deck, 10)),
-            new Player(dealCards(deck, 10))
+            new Player(Card.dealCards(deck, 10)), // this player is the user
+            new Player(Card.dealCards(deck, 10)),
+            new Player(Card.dealCards(deck, 10)),
+            new Player(Card.dealCards(deck, 10))
         ];
         
         this.currentRound = 1;
@@ -102,7 +102,7 @@ class Game {
         this.playedCards.push({
             cardId: cardId,
             playerIndex: playerIndex,
-            card: idToCard(cardId)
+            card: Card.idToCard(cardId)
         });
         
         // Notify UI to update display
