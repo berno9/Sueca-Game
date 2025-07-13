@@ -13,6 +13,8 @@ export class GameUI {
         this.game.onGameEnd = () => this.showGameEnd();
         this.game.onTurnChange = (playerIndex) => this.updateTurnIndicator(playerIndex);
         this.game.onRoundWin = (winnerIndex) => this.showRoundWinner(winnerIndex);
+        this.game.onShowContinueButton = () => this.showContinueButton();
+        this.game.onGameRestart = () => this.handleGameRestart();
         
         this.initializeUI();
         this.game.startRound();
@@ -200,10 +202,7 @@ export class GameUI {
             teammateNameElement.appendChild(teammateIndicator);
         }
         
-        // Clear winner indicators after 3 seconds
-        setTimeout(() => {
-            this.clearWinnerIndicators();
-        }, 2500);
+        // Winner indicators will be cleared when user clicks Continue button
     }
 
     clearWinnerIndicators() {
@@ -227,5 +226,70 @@ export class GameUI {
         }
     }
 
-    // ...existing code...
+    showContinueButton() {
+        // Create continue button
+        const continueButton = document.createElement('button');
+        continueButton.textContent = 'Continuar';
+        continueButton.id = 'continue-button';
+        continueButton.addEventListener('click', () => this.handleContinueClick());
+        
+        // Add button to the play area
+        const playArea = document.querySelector('.play-area');
+        playArea.appendChild(continueButton);
+    }
+
+    handleContinueClick() {
+        // Remove the continue button
+        const continueButton = document.getElementById('continue-button');
+        if (continueButton) {
+            continueButton.remove();
+        }
+        
+        // Clear winner indicators
+        this.clearWinnerIndicators();
+        
+        // Continue to next round
+        this.game.continueToNextRound();
+    }
+
+    showGameEnd() {
+        // Clear any existing turn indicators
+        this.clearTurnIndicators();
+        this.clearWinnerIndicators();
+        
+        // Create play again button
+        const playAgainButton = document.createElement('button');
+        playAgainButton.textContent = 'Jogar Novamente';
+        playAgainButton.id = 'play-again-button';
+        playAgainButton.addEventListener('click', () => this.handlePlayAgainClick());
+        
+        // Add button to the play area
+        const playArea = document.querySelector('.play-area');
+        playArea.appendChild(playAgainButton);
+        
+        console.log("Game ended! Click 'Play Again' to start a new game.");
+    }
+
+    handlePlayAgainClick() {
+        // Remove the play again button
+        const playAgainButton = document.getElementById('play-again-button');
+        if (playAgainButton) {
+            playAgainButton.remove();
+        }
+        
+        // Restart the game
+        this.game.restartGame();
+    }
+
+    handleGameRestart() {
+        // Clear the board and reset UI
+        this.clearPlayedCards();
+        this.clearTurnIndicators();
+        this.clearWinnerIndicators();
+        
+        // Re-initialize the UI
+        this.renderPlayerHand();
+        this.updateOtherPlayersCards();
+        this.updateTurnIndicator(this.game.currentPlayerIndex);
+    }
 }

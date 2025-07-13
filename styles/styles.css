@@ -120,6 +120,18 @@ button:active {
     background-color: #f8f9fa;
 }
 
+/* Button positioning in play area */
+.play-area button {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: 8em;
+    height: 2.5em;
+    font-size: 1.2em;
+}
+
 .played-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -168,9 +180,11 @@ button:active {
     position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
     min-height: 200px;
     padding: 20px;
     min-width: 300px; /* Increased to accommodate 10 cards */
+    width: 100%;
 }
 
 /* Card back styling for other players */
@@ -185,26 +199,39 @@ button:active {
     cursor: default;
 }
 
-/* Horizontal card stacking (top and bottom players) */
-.player-cards .card-back:nth-child(1) { left: 0px; z-index: 10; }
-.player-cards .card-back:nth-child(2) { left: 15px; z-index: 9; }
-.player-cards .card-back:nth-child(3) { left: 30px; z-index: 8; }
-.player-cards .card-back:nth-child(4) { left: 45px; z-index: 7; }
-.player-cards .card-back:nth-child(5) { left: 60px; z-index: 6; }
-.player-cards .card-back:nth-child(6) { left: 75px; z-index: 5; }
-.player-cards .card-back:nth-child(7) { left: 90px; z-index: 4; }
-.player-cards .card-back:nth-child(8) { left: 105px; z-index: 3; }
-.player-cards .card-back:nth-child(9) { left: 120px; z-index: 2; }
-.player-cards .card-back:nth-child(10) { left: 135px; z-index: 1; }
+/* Horizontal card stacking - centered for all players */
+.player-cards .card-back:nth-child(1) { left: calc(50% - 67.5px); z-index: 1; }
+.player-cards .card-back:nth-child(2) { left: calc(50% - 52.5px); z-index: 2; }
+.player-cards .card-back:nth-child(3) { left: calc(50% - 37.5px); z-index: 3; }
+.player-cards .card-back:nth-child(4) { left: calc(50% - 22.5px); z-index: 4; }
+.player-cards .card-back:nth-child(5) { left: calc(50% - 7.5px); z-index: 5; }
+.player-cards .card-back:nth-child(6) { left: calc(50% + 7.5px); z-index: 6; }
+.player-cards .card-back:nth-child(7) { left: calc(50% + 22.5px); z-index: 7; }
+.player-cards .card-back:nth-child(8) { left: calc(50% + 37.5px); z-index: 8; }
+.player-cards .card-back:nth-child(9) { left: calc(50% + 52.5px); z-index: 9; }
+.player-cards .card-back:nth-child(10) { left: calc(50% + 67.5px); z-index: 10; }
 
+
+.bottom-player, .top-player, .left-player, .right-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
 
 /* Player's hand (bottom) - actual cards */
 .bottom-player .player-cards {
     justify-content: center;
+    width: 100%;
 }
 
 #player-hand {
     margin-top: 1em;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    min-height: 200px;
 }
 
 /* Existing card styling for player's hand */
@@ -240,17 +267,17 @@ button:active {
     cursor: not-allowed;
 }
 
-/* Player hand card positioning */
-#player-hand .card:nth-child(1) { left: -135px; z-index: 15; }
-#player-hand .card:nth-child(2) { left: -105px; z-index: 14; }
-#player-hand .card:nth-child(3) { left: -75px; z-index: 13; }
-#player-hand .card:nth-child(4) { left: -45px; z-index: 12; }
-#player-hand .card:nth-child(5) { left: -15px; z-index: 11; }
-#player-hand .card:nth-child(6) { left: 15px; z-index: 10; }
-#player-hand .card:nth-child(7) { left: 45px; z-index: 9; }
-#player-hand .card:nth-child(8) { left: 75px; z-index: 8; }
-#player-hand .card:nth-child(9) { left: 105px; z-index: 7; }
-#player-hand .card:nth-child(10) { left: 135px; z-index: 6; }
+/* Player hand card positioning - centered around 50% */
+#player-hand .card:nth-child(1) { left: calc(50% - 135px); z-index: 6; }
+#player-hand .card:nth-child(2) { left: calc(50% - 105px); z-index: 7; }
+#player-hand .card:nth-child(3) { left: calc(50% - 75px); z-index: 8; }
+#player-hand .card:nth-child(4) { left: calc(50% - 45px); z-index: 9; }
+#player-hand .card:nth-child(5) { left: calc(50% - 15px); z-index: 10; }
+#player-hand .card:nth-child(6) { left: calc(50% + 15px); z-index: 11; }
+#player-hand .card:nth-child(7) { left: calc(50% + 45px); z-index: 12; }
+#player-hand .card:nth-child(8) { left: calc(50% + 75px); z-index: 13; }
+#player-hand .card:nth-child(9) { left: calc(50% + 105px); z-index: 14; }
+#player-hand .card:nth-child(10) { left: calc(50% + 135px); z-index: 15; }
 
 .card.red {
     color: #d63031;

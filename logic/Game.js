@@ -46,16 +46,17 @@ class Game {
             this.onTurnChange(this.currentPlayerIndex);
         }
 
-        const currentPlayer = this.getCurrentPlayer();
+        //const currentPlayer = this.getCurrentPlayer();
         
         if (this.currentPlayerIndex === 0) { // User's turn
             this.waitingForUserInput = true;
             this.onUserTurn();
         } else { // AI player's turn
             this.waitingForUserInput = false;
+            const waitTime = Math.floor(Math.random() * (2500 - 800 + 1)) + 800; // random number between two limits
             setTimeout(() => {
                 this.playAICard();
-            }, 1000); // Delay for better UX
+            }, waitTime); // "Random" delay for better UX
         }
     }
 
@@ -138,11 +139,10 @@ class Game {
         // Winner starts next round
         this.currentPlayerIndex = winningCard.playerIndex;
         
-        // Clear played cards after a delay
-        setTimeout(() => {
-            this.clearPlayedCards();
-            this.nextRound();
-        }, 2000);
+        // Show continue button instead of auto-clearing
+        if (this.onShowContinueButton) {
+            this.onShowContinueButton();
+        }
     }
 
     // Clear played cards from the board
@@ -181,6 +181,40 @@ class Game {
     // Get user's hand
     getUserHand() {
         return this.players[0].current_hand;
+    }
+
+    // Continue to next round (called by UI button)
+    continueToNextRound() {
+        this.clearPlayedCards();
+        this.nextRound();
+    }
+
+    // Restart the entire game
+    restartGame() {
+        // Reset game state
+        const deck = Card.shuffle(Card.createDeck());
+        
+        this.players = [
+            new Player(Card.dealCards(deck, 10)),
+            new Player(Card.dealCards(deck, 10)),
+            new Player(Card.dealCards(deck, 10)),
+            new Player(Card.dealCards(deck, 10))
+        ];
+        
+        this.currentRound = 1;
+        this.currentPlayerIndex = Math.floor(Math.random() * 4);
+        this.playedCards = [];
+        this.waitingForUserInput = false;
+        this.gameEnded = false;
+        this.roundStarted = false;
+        
+        // Notify UI to restart
+        if (this.onGameRestart) {
+            this.onGameRestart();
+        }
+        
+        // Start the new game
+        this.startRound();
     }
 }
 
