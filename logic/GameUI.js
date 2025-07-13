@@ -61,8 +61,17 @@ export class GameUI {
         setTimeout(() => {
             if (this.clickCount.get(cardId) === 1) {
                 this.clickCount.set(cardId, 0);
+                // Reset turn indicator back to normal if it's still user's turn and no card is selected
+                if (this.game.isUserTurn() && this.selectedCard === cardId) {
+                    this.selectedCard = null;
+                    // Clear selection visual state
+                    document.querySelectorAll('#player-hand .card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    this.updateTurnIndicator(0);
+                }
             }
-        }, 500);
+        }, 5000);
     }
 
     selectCard(cardElement, cardId) {
@@ -71,9 +80,19 @@ export class GameUI {
             card.classList.remove('selected');
         });
         
+        // Reset click counts for previously selected cards
+        if (this.selectedCard && this.selectedCard !== cardId) {
+            this.clickCount.set(this.selectedCard, 0);
+        }
+        
         // Select this card
         cardElement.classList.add('selected');
         this.selectedCard = cardId;
+        
+        // Update turn indicator to show "press again" message if it's user's turn
+        if (this.game.isUserTurn()) {
+            this.updateTurnIndicatorForSelectedCard();
+        }
     }
 
     playCard(cardId) {
@@ -87,6 +106,10 @@ export class GameUI {
             this.renderPlayerHand(); // Re-render to remove played card
             this.selectedCard = null;
             this.clickCount.delete(cardId);
+            // Restore normal turn indicator for user if still their turn
+            if (this.game.isUserTurn()) {
+                this.updateTurnIndicator(0);
+            }
         } else {
             console.log("Failed to play card");
         }
@@ -129,7 +152,21 @@ export class GameUI {
         if (playerNameElement) {
             const turnIndicator = document.createElement('span');
             turnIndicator.className = 'turn-indicator';
-            turnIndicator.textContent = ' (Your Turn)';
+            turnIndicator.textContent = ' (A Jogar)';
+            playerNameElement.appendChild(turnIndicator);
+        }
+    }
+
+    updateTurnIndicatorForSelectedCard() {
+        // Clear all existing turn indicators
+        this.clearTurnIndicators();
+        
+        // Add special turn indicator for selected card state
+        const playerNameElement = this.getPlayerNameElement(0); // User is always player 0
+        if (playerNameElement) {
+            const turnIndicator = document.createElement('span');
+            turnIndicator.className = 'turn-indicator';
+            turnIndicator.textContent = ' (Prime novamente para jogar)';
             playerNameElement.appendChild(turnIndicator);
         }
     }
@@ -149,7 +186,7 @@ export class GameUI {
         if (winnerNameElement) {
             const winnerIndicator = document.createElement('span');
             winnerIndicator.className = 'winner-indicator';
-            winnerIndicator.textContent = ' (Winner)';
+            winnerIndicator.textContent = ' (Vencedor)';
             winnerNameElement.appendChild(winnerIndicator);
         }
         
@@ -159,14 +196,14 @@ export class GameUI {
         if (teammateNameElement) {
             const teammateIndicator = document.createElement('span');
             teammateIndicator.className = 'winner-indicator';
-            teammateIndicator.textContent = ' (Winner)';
+            teammateIndicator.textContent = ' (Vencedor)';
             teammateNameElement.appendChild(teammateIndicator);
         }
         
         // Clear winner indicators after 3 seconds
         setTimeout(() => {
             this.clearWinnerIndicators();
-        }, 3000);
+        }, 2500);
     }
 
     clearWinnerIndicators() {

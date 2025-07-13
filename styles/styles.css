@@ -203,6 +203,10 @@ button:active {
     justify-content: center;
 }
 
+#player-hand {
+    margin-top: 1em;
+}
+
 /* Existing card styling for player's hand */
 #player-hand .card {
     width: 120px;
