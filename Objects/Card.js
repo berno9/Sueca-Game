@@ -1,6 +1,7 @@
 class Card {
     static SUITS = ['S', 'H', 'D', 'C'];
-    static RANKS = ['2', '3', '4', '5', '6', 'J', 'Q', 'K', '7', 'A'];
+    static RANKS = ['2', '3', '4', '5', '6', 'Q', 'J', 'K', '7', 'A'];
+    static POINTS = [0, 0, 0, 0, 0, 2, 3, 4, 10, 11];
     
     constructor(id) {
         this.id = id;
@@ -10,11 +11,7 @@ class Card {
 
     // Convert to simple object (for game logic that needs rank/suit)
     toObject() {
-        return { 
-            id: this.id,
-            rank: this.rank, 
-            suit: this.suit 
-        };
+        return new Card(this.id);
     }
 
     // Convert suit letter to full name
@@ -81,7 +78,36 @@ class Card {
         return cardElement;
     }
 
+    toPoints() {
+        return Card.POINTS[Card.RANKS.indexOf(this.rank)];
+    }
+
     // === STATIC METHODS FOR BACKWARD COMPATIBILITY ===
+    
+    // Returns true if first card beats the second card
+    static isHigherCard(a, b, trumpSuit) {
+        // This is comparing two played card objects with {cardId, playerIndex, card} structure
+        const cardA = a.card;
+        const cardB = b.card;
+        
+        const isATrump = cardA.suit === trumpSuit;
+        const isBTrump = cardB.suit === trumpSuit;
+        
+        // If first is trump and second isn't, trump wins
+        if (isATrump && !isBTrump) {
+            return true;
+        }
+        // If both are trump or both are not trump, compare ranks
+        if (cardA.suit === cardB.suit) {
+            // Same suit - higher rank wins
+            const rankIndexA = this.RANKS.indexOf(cardA.rank);
+            const rankIndexB = this.RANKS.indexOf(cardB.rank);
+            return rankIndexA > rankIndexB;
+        }
+        
+        // Different suits, neither trump - first card played wins (following suit rule)
+        return false;
+    }
     
     // Create card element from ID (for backward compatibility)
     static createCardElement(cardId, isPlayable = false) {

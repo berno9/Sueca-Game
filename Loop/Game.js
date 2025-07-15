@@ -43,6 +43,10 @@ class Game {
     async playTurn() {
         if (this.playedCards.length >= 4) {
             this.evaluateRound();
+            // Show continue button instead of auto-clearing
+            if (this.onShowContinueButton) {
+                this.onShowContinueButton();
+            }
             return;
         }
 
@@ -58,7 +62,7 @@ class Game {
             this.onUserTurn();
         } else { // AI player's turn
             this.waitingForUserInput = false;
-            const waitTime = Math.floor(Math.random() * (2500 - 800 + 1)) + 800; // random number between two limits
+            const waitTime = Math.floor(Math.random() * (2300 - 800 + 1)) + 700; // random number between two limits
             setTimeout(() => {
                 this.playAICard();
             }, waitTime); // "Random" delay for better UX
@@ -137,32 +141,26 @@ class Game {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 4;
     }
 
-    // Evaluate the round and determine winner
+    // Determine winner of just-finished round
     evaluateRound() {
         if (this.playedCards.length !== 4) return;
 
-        // Simple evaluation for now - highest card wins (by ID)
         let winningCard = this.playedCards[0];
+        
         for (let i = 1; i < this.playedCards.length; i++) {
-            if (this.playedCards[i].cardId > winningCard.cardId) {
-                winningCard = this.playedCards[i];
-            }
+            const currentCard = this.playedCards[i];
+            if (Card.isHigherCard(currentCard, winningCard, this.trumpSuit)) 
+                winningCard = currentCard;
         }
 
-        console.log(`Round ${this.currentRound} won by Player ${winningCard.playerIndex + 1}`);
+        let pointsEarned = this.playedCards.reduce((acc, c) => acc + c.card.toPoints(), 0);
         
         // Notify UI about round winner
         if (this.onRoundWin) {
-            this.onRoundWin(winningCard.playerIndex);
+            this.onRoundWin(winningCard.playerIndex, pointsEarned);
         }
-        
         // Winner starts next round
         this.currentPlayerIndex = winningCard.playerIndex;
-        
-        // Show continue button instead of auto-clearing
-        if (this.onShowContinueButton) {
-            this.onShowContinueButton();
-        }
     }
 
     // Clear played cards from the board

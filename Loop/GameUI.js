@@ -12,7 +12,7 @@ export class GameUI {
         this.game.onClearPlayedCards = () => this.clearPlayedCards();
         this.game.onGameEnd = () => this.showGameEnd();
         this.game.onTurnChange = (playerIndex) => this.updateTurnIndicator(playerIndex);
-        this.game.onRoundWin = (winnerIndex) => this.showRoundWinner(winnerIndex);
+        this.game.onRoundWin = (winnerIndex, pointsEarned) => this.showRoundWinner(winnerIndex, pointsEarned);
         this.game.onShowContinueButton = () => this.showContinueButton();
         this.game.onGameRestart = () => this.handleGameRestart();
         
@@ -150,8 +150,14 @@ export class GameUI {
             
             // Add missing cards (for game restart)
             while (playerCards.children.length < cardCount) {
-                const cardElement = Card.createCardElement(0, false); // Create face-down card
-                cardElement.classList.add('opponent-card');
+                // Create a proper face-down card
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card card-back opponent-card';
+                cardElement.innerHTML = `
+                    <div class="card-back-content">
+                        <div class="card-back-pattern"></div>
+                    </div>
+                `;
                 playerCards.appendChild(cardElement);
             }
         }
@@ -193,7 +199,7 @@ export class GameUI {
         this.clearErrorIndicators();
     }
 
-    showRoundWinner(winnerIndex) {
+    showRoundWinner(winnerIndex, pointsEarned) {
         // Clear existing winner indicators
         this.clearWinnerIndicators();
         
@@ -205,18 +211,16 @@ export class GameUI {
             winnerIndicator.textContent = ' (Vencedor)';
             winnerNameElement.appendChild(winnerIndicator);
         }
+
+        // Update Score Board
+        let element;
+        if (winnerIndex === 0 || winnerIndex === 2)
+            element = document.getElementById("user-score");
+        else
+            element = document.getElementById("opponents-score");
         
-        // Show winner for teammate (player sitting across)
-        // const teammateIndex = (winnerIndex + 2) % 4;
-        // const teammateNameElement = this.getPlayerNameElement(teammateIndex);
-        // if (teammateNameElement) {
-        //     const teammateIndicator = document.createElement('span');
-        //     teammateIndicator.className = 'winner-indicator';
-        //     teammateIndicator.textContent = ' (Vencedor)';
-        //     teammateNameElement.appendChild(teammateIndicator);
-        // }
-        
-        // Winner indicators will be cleared when user clicks Continue button
+        let newScore = parseInt(element.textContent) + pointsEarned;
+        element.textContent = newScore;
     }
 
     clearWinnerIndicators() {
@@ -303,6 +307,14 @@ export class GameUI {
         this.clearPlayedCards();
         this.clearTurnIndicators();
         this.clearWinnerIndicators();
+        
+        // Reset UI state
+        this.selectedCard = null;
+        this.clickCount.clear();
+        
+        // Reset scores to 0
+        document.getElementById("user-score").textContent = "0";
+        document.getElementById("opponents-score").textContent = "0";
         
         // Re-initialize the UI
         this.renderPlayerHand();
