@@ -1,5 +1,5 @@
 import { Game } from './Game.js';
-import { Card } from './Card.js';
+import { Card } from '../Objects/Card.js';
 
 export class GameUI {
     constructor() {
@@ -113,7 +113,10 @@ export class GameUI {
                 this.updateTurnIndicator(0);
             }
         } else {
-            console.log("Failed to play card");
+            // Show error message for illegal move
+            this.showIllegalMoveMessage();
+            // Keep the card selected so user can try again
+            console.log("Failed to play card - illegal move");
         }
     }
 
@@ -141,6 +144,13 @@ export class GameUI {
             // Remove excess cards
             while (playerCards.children.length > cardCount) {
                 playerCards.removeChild(playerCards.lastChild);
+            }
+            
+            // Add missing cards (for game restart)
+            while (playerCards.children.length < cardCount) {
+                const cardElement = Card.createCardElement(0, false); // Create face-down card
+                cardElement.classList.add('opponent-card');
+                playerCards.appendChild(cardElement);
             }
         }
     }
@@ -177,6 +187,8 @@ export class GameUI {
         document.querySelectorAll('.turn-indicator').forEach(indicator => {
             indicator.remove();
         });
+        // Also clear error indicators when turn changes
+        this.clearErrorIndicators();
     }
 
     showRoundWinner(winnerIndex) {
@@ -193,14 +205,14 @@ export class GameUI {
         }
         
         // Show winner for teammate (player sitting across)
-        const teammateIndex = (winnerIndex + 2) % 4;
-        const teammateNameElement = this.getPlayerNameElement(teammateIndex);
-        if (teammateNameElement) {
-            const teammateIndicator = document.createElement('span');
-            teammateIndicator.className = 'winner-indicator';
-            teammateIndicator.textContent = ' (Vencedor)';
-            teammateNameElement.appendChild(teammateIndicator);
-        }
+        // const teammateIndex = (winnerIndex + 2) % 4;
+        // const teammateNameElement = this.getPlayerNameElement(teammateIndex);
+        // if (teammateNameElement) {
+        //     const teammateIndicator = document.createElement('span');
+        //     teammateIndicator.className = 'winner-indicator';
+        //     teammateIndicator.textContent = ' (Vencedor)';
+        //     teammateNameElement.appendChild(teammateIndicator);
+        // }
         
         // Winner indicators will be cleared when user clicks Continue button
     }
@@ -291,5 +303,35 @@ export class GameUI {
         this.renderPlayerHand();
         this.updateOtherPlayersCards();
         this.updateTurnIndicator(this.game.currentPlayerIndex);
+    }
+
+    showIllegalMoveMessage() {
+        // Clear ALL existing indicators first (turn, winner, error)
+        this.clearTurnIndicators(); // This also clears error indicators
+        this.clearWinnerIndicators();
+        
+        // Show error message for the user
+        const playerNameElement = this.getPlayerNameElement(0); // User is always player 0
+        if (playerNameElement) {
+            const errorIndicator = document.createElement('span');
+            errorIndicator.className = 'error-indicator';
+            errorIndicator.textContent = ' (Jogada inválida - escolhe outra carta)';
+            playerNameElement.appendChild(errorIndicator);
+            
+            // Remove error message after 3 seconds
+            setTimeout(() => {
+                this.clearErrorIndicators();
+                // Restore normal turn indicator if still user's turn
+                if (this.game.isUserTurn()) {
+                    this.updateTurnIndicator(0);
+                }
+            }, 3000);
+        }
+    }
+
+    clearErrorIndicators() {
+        document.querySelectorAll('.error-indicator').forEach(indicator => {
+            indicator.remove();
+        });
     }
 }

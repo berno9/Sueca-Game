@@ -1,19 +1,20 @@
-import { Hand } from './Hand.js';
-import { Card } from './Card.js';
+import { Hand } from '../Objects/Hand.js';
+import { Card } from '../Objects/Card.js';
 
 class Player {
     constructor(cards = []) {
         this.hand = new Hand(cards);
+        this.hand.sort();
     }
 
     // Play a random card (for AI players)
-    playCard() {
-        return this.hand.playRandomCard();
+    playCard(playedCards) {
+        return this.hand.playRandomCard(playedCards);
     }
 
     // Play a specific card by ID (for user input)
-    playSelectedCard(cardId) {
-        return this.hand.playCard(cardId);
+    playSelectedCard(cardId, playedCards) {
+        return this.hand.playCard(cardId, playedCards);
     }
 
     hasCard(cardId) {

@@ -326,3 +326,17 @@ button:active {
 .card-suit-large {
     font-size: 48px;
 }
+
+/* Error Indicator */
+.error-indicator {
+    color: #f44336;
+    font-weight: bold;
+    font-size: 0.9em;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}

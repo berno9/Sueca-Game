@@ -1,6 +1,6 @@
 import { Player } from "./Player.js";
-import { Card } from "./Card.js";
-import { Deck } from "./Deck.js";
+import { Card } from "../Objects/Card.js";
+import { Deck } from "../Objects/Deck.js";
 
 class Game {
     constructor() {
@@ -70,7 +70,7 @@ class Game {
     // Handle AI player's turn
     playAICard() {
         const currentPlayer = this.getCurrentPlayer();
-        const playedCard = currentPlayer.playCard();
+        const playedCard = currentPlayer.playCard(this.playedCards);
         
         if (playedCard !== undefined) {
             this.addPlayedCard(playedCard, this.currentPlayerIndex);
@@ -87,7 +87,7 @@ class Game {
         }
 
         const userPlayer = this.players[0];
-        const playedCard = userPlayer.playSelectedCard(cardId);
+        const playedCard = userPlayer.playSelectedCard(cardId, this.playedCards);
         
         if (playedCard !== undefined) {
             this.addPlayedCard(playedCard, 0);

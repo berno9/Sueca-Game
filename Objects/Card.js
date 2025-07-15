@@ -1,6 +1,6 @@
 class Card {
     static SUITS = ['S', 'H', 'D', 'C'];
-    static RANKS = ['A', '2', '3', '4', '5', '6', '7', 'J', 'Q', 'K'];
+    static RANKS = ['2', '3', '4', '5', '6', 'J', 'Q', 'K', '7', 'A'];
     
     constructor(id) {
         this.id = id;
