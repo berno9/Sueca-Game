@@ -36,6 +36,11 @@ class Player {
         return this.hand;
     }
 
+    // Get all cards (Card objects)
+    getCards() {
+        return this.hand.getCards();
+    }
+
     // === BACKWARD COMPATIBILITY ===
     // Keep current_hand property for existing UI code
     get current_hand() {

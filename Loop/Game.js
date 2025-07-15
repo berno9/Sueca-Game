@@ -20,6 +20,10 @@ class Game {
         this.waitingForUserInput = false;
         this.gameEnded = false;
         this.roundStarted = false;
+        this.showTrumpCard = true; // Show actual trump card only in first round
+        
+        // Select trump card and suit
+        this.selectTrumpCard();
     }
 
     getCurrentPlayer() {
@@ -172,6 +176,11 @@ class Game {
     nextRound() {
         this.currentRound++;
         
+        // Hide trump card after first round
+        if (this.currentRound > 1) {
+            this.showTrumpCard = false;
+        }
+        
         if (this.currentRound > this.maxRounds) {
             this.endGame();
         } else {
@@ -223,6 +232,10 @@ class Game {
         this.waitingForUserInput = false;
         this.gameEnded = false;
         this.roundStarted = false;
+        this.showTrumpCard = true; // Reset to show trump card in first round
+        
+        // Select new trump card
+        this.selectTrumpCard();
         
         // Notify UI to restart
         if (this.onGameRestart) {
@@ -231,6 +244,43 @@ class Game {
         
         // Start the new game
         this.startRound();
+    }
+
+    // Select trump card and suit
+    selectTrumpCard() {
+        // Choose a random player
+        const randomPlayerIndex = Math.floor(Math.random() * 4);
+        const randomPlayer = this.players[randomPlayerIndex];
+        
+        // Choose a random card from that player's hand
+        const playerCards = randomPlayer.getCards();
+        const randomCardIndex = Math.floor(Math.random() * playerCards.length);
+        const trumpCard = playerCards[randomCardIndex];
+        
+        // Set trump card and suit
+        this.trumpCard = trumpCard;
+        this.trumpSuit = trumpCard.suit;
+        this.trumpPlayerIndex = randomPlayerIndex;
+        
+        console.log(`Trump card: ${trumpCard.rank} of ${trumpCard.suitToName()} (Player ${randomPlayerIndex + 1})`);
+    }
+
+    // Get trump information
+    getTrumpCard() {
+        return this.trumpCard;
+    }
+
+    getTrumpSuit() {
+        return this.trumpSuit;
+    }
+
+    getTrumpPlayerIndex() {
+        return this.trumpPlayerIndex;
+    }
+
+    // Check if trump card should be shown (only first round)
+    shouldShowTrumpCard() {
+        return this.showTrumpCard && this.currentRound === 1;
     }
 }
 

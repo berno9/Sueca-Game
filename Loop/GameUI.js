@@ -23,6 +23,8 @@ export class GameUI {
     initializeUI() {
         this.renderPlayerHand();
         this.updateOtherPlayersCards();
+        this.displayTrumpSymbol();
+        this.showTrumpCardReveal(); // Show trump card in first round
         // Show initial turn indicator
         this.updateTurnIndicator(this.game.currentPlayerIndex);
     }
@@ -262,6 +264,9 @@ export class GameUI {
         
         // Continue to next round
         this.game.continueToNextRound();
+        
+        // Update trump display (symbol stays, but no more card reveals after first round)
+        this.displayTrumpSymbol();
     }
 
     showGameEnd() {
@@ -302,6 +307,8 @@ export class GameUI {
         // Re-initialize the UI
         this.renderPlayerHand();
         this.updateOtherPlayersCards();
+        this.displayTrumpSymbol();
+        this.showTrumpCardReveal(); // Show trump card reveal for new game
         this.updateTurnIndicator(this.game.currentPlayerIndex);
     }
 
@@ -333,5 +340,75 @@ export class GameUI {
         document.querySelectorAll('.error-indicator').forEach(indicator => {
             indicator.remove();
         });
+    }
+
+    displayTrumpSymbol() {
+        // Always show the trump symbol
+        const trumpDisplay = document.querySelector('.trump-display');
+        const trumpCard = this.game.getTrumpCard();
+        const trumpCardElement = document.getElementById('trump-card');
+        
+        if (trumpCard && trumpCardElement) {
+            // Just show the suit symbol
+            trumpCardElement.textContent = trumpCard.getSuitSymbol();
+            trumpCardElement.style.color = trumpCard.isRed() ? '#d32f2f' : '#000';
+        }
+        
+        // Always show the trump display
+        if (trumpDisplay) {
+            trumpDisplay.style.display = 'flex';
+        }
+    }
+
+    showTrumpCardReveal() {
+        // Show the actual trump card only in first round
+        if (this.game.shouldShowTrumpCard()) {
+            const trumpPlayerIndex = this.game.getTrumpPlayerIndex();
+            const trumpCard = this.game.getTrumpCard();
+            
+            // Temporarily show the trump card in the trump player's hand
+            this.revealTrumpCardInHand(trumpPlayerIndex, trumpCard);
+            
+            // Hide it after 5 seconds
+            // setTimeout(() => {
+            //     this.hideTrumpCardInHand(trumpPlayerIndex);
+            // }, 5000);
+        }
+    }
+
+    revealTrumpCardInHand(playerIndex, trumpCard) {
+        if (playerIndex === 0) {
+            // User's hand - trump card is already visible as a normal card
+            return;
+        }
+        
+        // For other players, temporarily replace one card back with the trump card
+        const playerCards = document.getElementById(`player-${playerIndex}-cards`);
+        if (playerCards && playerCards.children.length > 0) {
+            const cardBack = playerCards.children[0];
+            const trumpCardElement = Card.createCardElement(trumpCard.id, true);
+            trumpCardElement.classList.add('card-back', 'trump-reveal');
+            trumpCardElement.style.position = 'absolute';
+            trumpCardElement.style.left = cardBack.style.left;
+            trumpCardElement.style.width = '80px';
+            trumpCardElement.style.height = '112px';
+            trumpCardElement.style.zIndex = '100';
+            
+            // Add the trump card
+            playerCards.appendChild(trumpCardElement);
+        }
+    }
+
+    hideTrumpCardInHand(playerIndex) {
+        if (playerIndex === 0) return; // User's hand doesn't need hiding
+        
+        // Remove the revealed trump card
+        const playerCards = document.getElementById(`player-${playerIndex}-cards`);
+        if (playerCards) {
+            const trumpReveal = playerCards.querySelector('.trump-reveal');
+            if (trumpReveal) {
+                trumpReveal.remove();
+            }
+        }
     }
 }

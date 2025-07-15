@@ -340,3 +340,99 @@ button:active {
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
+
+/* Scores Section */
+.Scores {
+    position: absolute;
+    right: -150px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    min-width: 120px;
+}
+
+.self-score, .other-score {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    padding: 5px 0;
+}
+
+.self-score {
+    /* color: #2196F3; */
+    border-bottom: 1px solid #eee;
+}
+
+/* .other-score {
+    color: #f44336;
+} */
+
+.self-score span, .other-score span {
+    font-size: 1.2em;
+    margin-left: 5px;
+}
+
+/* Make sure bottom-player has relative positioning for absolute positioning of scores */
+.bottom-player {
+    position: relative;
+}
+
+/* Trump card display */
+.trump-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.trump-label {
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.trump-card {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 2px solid #333;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Trump card reveal animation */
+.trump-reveal {
+    animation: trumpReveal 3s ease-in-out;
+    border: 3px solid #ffd700 !important;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7) !important;
+}
+
+@keyframes trumpReveal {
+    0% { 
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+    50% { 
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+    100% { 
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+    }
+}
